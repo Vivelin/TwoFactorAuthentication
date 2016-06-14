@@ -16,7 +16,14 @@ namespace Decos.TwoFactorAuthentication
         /// <summary>
         /// An array of the characters to ignore when decoding a Base32-encoded string.
         /// </summary>
-        public static readonly char[] Base32Ignore = new char[] { ' ', '\t', '\r', '\n', '-', '=' };
+        public static readonly char[] Base32Ignore
+            = new char[] { ' ', '\t', '\r', '\n', '-', '=' };
+
+        /// <summary>
+        /// The Unix epoch.
+        /// </summary>
+        public static readonly DateTime UnixEpoch
+            = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         /// <summary>
         /// Decodes a Base32 encoded string.
@@ -135,6 +142,19 @@ namespace Decos.TwoFactorAuthentication
             if (BitConverter.IsLittleEndian)
                 Array.Reverse(bytes);
             return bytes;
+        }
+
+        /// <summary>
+        /// Returns the Unix time representation of the <see cref="DateTime"/> object.
+        /// </summary>
+        /// <param name="value">The <see cref="DateTime"/> object to convert.</param>
+        /// <returns>
+        /// A 64-bit integer containing the total number of elapsed seconds since Unix epoch.
+        /// </returns>
+        public static long ToUnixTime(this DateTime value)
+        {
+            value = value.ToUniversalTime();
+            return (long)(value - UnixEpoch).TotalSeconds;
         }
     }
 }
