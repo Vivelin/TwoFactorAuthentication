@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 namespace Decos.TwoFactorAuthentication
 {
     /// <summary>
-    /// Provides methods for generating time-based and HMAC-based one-time passwords.
+    /// Provides methods for generating and validating time-based and HMAC-based one-time passwords.
     /// </summary>
     public static class Otp
     {
@@ -17,12 +17,12 @@ namespace Decos.TwoFactorAuthentication
         public const long Epoch = 0;
 
         /// <summary>
-        /// The HMAC implementation to use.
+        /// The hash implementation to use in computing HMAC.
         /// </summary>
         /// <remarks>
         /// Some apps, such as Google Authenticator, only support SHA1-based HMAC.
         /// </remarks>
-        public const string HmacAlgorithm = "HMACSHA1";
+        public const string HmacAlgorithm = "SHA1";
 
         /// <summary>
         /// The number of bits used in generating shared secret keys.
@@ -71,7 +71,7 @@ namespace Decos.TwoFactorAuthentication
         /// <returns>A byte array containing the 160-bits computed hash.</returns>
         public static byte[] GetHmac(byte[] secret, byte[] message)
         {
-            using (var hmacAlgorithm = HMAC.Create(HmacAlgorithm))
+            using (var hmacAlgorithm = HMAC.Create("HMAC" + HmacAlgorithm))
             {
                 hmacAlgorithm.Key = secret;
                 return hmacAlgorithm.ComputeHash(message);
@@ -100,25 +100,6 @@ namespace Decos.TwoFactorAuthentication
         }
 
         /// <summary>
-        /// Returns a HMAC-based one-time password using the specified shared secret and counter
-        /// value.
-        /// </summary>
-        /// <param name="key">The shared secret key as Base32 encoded string.</param>
-        /// <param name="counter">
-        /// An 8-byte counter value that must be synchronized between the client and server.
-        /// </param>
-        /// <returns>
-        /// A string containing the one-time password, consisting of a number of digits (as defined
-        /// by <see cref="TokenLength"/>).
-        /// </returns>
-        /// <remarks>The HTOP algorithm is described in RFC 4226.</remarks>
-        public static string GetHotp(string key, long counter)
-        {
-            byte[] secret = Utility.Base32Decode(key);
-            return GetHotp(secret, counter);
-        }
-
-        /// <summary>
         /// Returns a time-based one-time password using the specified shared secret.
         /// </summary>
         /// <param name="secret">The shared secret key.</param>
@@ -129,23 +110,23 @@ namespace Decos.TwoFactorAuthentication
         /// <remarks>The TOTP algorithm is described in RFC 6238.</remarks>
         public static string GetTotp(byte[] secret)
         {
-            long steps = (DateTime.UtcNow.ToUnixTime() - Epoch) / TimeStep;
-            return GetHotp(secret, steps);
+            return GetTotp(secret, 0);
         }
 
         /// <summary>
-        /// Returns a time-based one-time password using the specified shared secret.
+        /// Returns a past or future time-based one-time password using the specified shared secret.
         /// </summary>
-        /// <param name="key">The shared secret key as Base32 encoded string.</param>
+        /// <param name="secret">The shared secret key.</param>
+        /// <param name="offset">The number of time steps to look ahead or behind.</param>
         /// <returns>
         /// A string containing the one-time password, consisting of a number of digits (as defined
         /// by <see cref="TokenLength"/>).
         /// </returns>
         /// <remarks>The TOTP algorithm is described in RFC 6238.</remarks>
-        public static string GetTotp(string key)
+        public static string GetTotp(byte[] secret, int offset)
         {
-            byte[] secret = Utility.Base32Decode(key);
-            return GetTotp(secret);
+            long steps = (DateTime.UtcNow.ToUnixTime() - Epoch) / TimeStep;
+            return GetHotp(secret, steps + offset);
         }
 
         /// <summary>
