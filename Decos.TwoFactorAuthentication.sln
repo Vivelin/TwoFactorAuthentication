@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Decos.Otp", "Decos.Otp\Decos.Otp.csproj", "{3377DA93-C8DE-4996-A364-8CFB10A3749A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Decos.TwoFactorAuthentication", "Decos.TwoFactorAuthentication\Decos.TwoFactorAuthentication.csproj", "{33479C5E-FFA7-4C8D-AD82-6579EAF9190A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestBase32", "Test\TestBase32.csproj", "{1A3004E5-3D6B-41FC-9AA2-0B4241DF62E3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3377DA93-C8DE-4996-A364-8CFB10A3749A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3377DA93-C8DE-4996-A364-8CFB10A3749A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3377DA93-C8DE-4996-A364-8CFB10A3749A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3377DA93-C8DE-4996-A364-8CFB10A3749A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33479C5E-FFA7-4C8D-AD82-6579EAF9190A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33479C5E-FFA7-4C8D-AD82-6579EAF9190A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33479C5E-FFA7-4C8D-AD82-6579EAF9190A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33479C5E-FFA7-4C8D-AD82-6579EAF9190A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A3004E5-3D6B-41FC-9AA2-0B4241DF62E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A3004E5-3D6B-41FC-9AA2-0B4241DF62E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A3004E5-3D6B-41FC-9AA2-0B4241DF62E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A3004E5-3D6B-41FC-9AA2-0B4241DF62E3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
