@@ -122,5 +122,19 @@ namespace Decos.TwoFactorAuthentication
             }
             return value.ToString();
         }
+
+        /// <summary>
+        /// Returns the specified 64-bit signed integer value as an array of bytes, high-order byte
+        /// first.
+        /// </summary>
+        /// <param name="value">The number to convert.</param>
+        /// <returns>An array of bytes with length 8.</returns>
+        public static byte[] GetBytes(long value)
+        {
+            byte[] bytes = BitConverter.GetBytes(value);
+            if (BitConverter.IsLittleEndian)
+                Array.Reverse(bytes);
+            return bytes;
+        }
     }
 }

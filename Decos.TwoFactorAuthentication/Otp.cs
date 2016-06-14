@@ -8,18 +8,38 @@ namespace Decos.TwoFactorAuthentication
     /// </summary>
     public static class Otp
     {
-        // Note: while these constants could be configurable, Google Authenticator (among others)
-        // only supports these defaults.
-
         /// <summary>
         /// The HMAC implementation to use.
         /// </summary>
+        /// <remarks>
+        /// Some apps, such as Google Authenticator, only support SHA1-based HMAC.
+        /// </remarks>
         public const string HmacAlgorithm = "HMACSHA1";
+
+        /// <summary>
+        /// The number of bits used in generating shared secret keys.
+        /// </summary>
+        public const int SecretStrength = 128;
 
         /// <summary>
         /// The number of digits in a token.
         /// </summary>
+        /// <remarks>Some apps, such as Google Authenticator, only support 6 digit tokens.</remarks>
         public const int TokenLength = 6;
+
+        /// <summary>
+        /// Generates a cryptographically strong secret key.
+        /// </summary>
+        /// <returns>A byte array containing the generated shared secret.</returns>
+        public static byte[] GenerateSecret()
+        {
+            byte[] buffer = new byte[SecretStrength / 8];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(buffer);
+            }
+            return buffer;
+        }
 
         /// <summary>
         /// Computes the hash-based message authentication code (HMAC) for the specified message and
@@ -38,7 +58,8 @@ namespace Decos.TwoFactorAuthentication
         }
 
         /// <summary>
-        /// Returns a HMAC-based one-time password using the specified shared secret and counter.
+        /// Returns a HMAC-based one-time password using the specified shared secret and counter
+        /// value.
         /// </summary>
         /// <param name="secret">The shared secret key.</param>
         /// <param name="counter">
@@ -51,10 +72,29 @@ namespace Decos.TwoFactorAuthentication
         /// <remarks>The HTOP algorithm is described in RFC 4226.</remarks>
         public static string GetHotp(byte[] secret, long counter)
         {
-            byte[] message = BitConverter.GetBytes(counter);
+            byte[] message = Utility.GetBytes(counter);
             byte[] hmac = GetHmac(secret, message);
             int hotp = Truncate(hmac);
             return GetToken(hotp);
+        }
+
+        /// <summary>
+        /// Returns a HMAC-based one-time password using the specified shared secret and counter
+        /// value.
+        /// </summary>
+        /// <param name="key">The shared secret key.</param>
+        /// <param name="counter">
+        /// An 8-byte counter value that must be synchronized between the client and server.
+        /// </param>
+        /// <returns>
+        /// A string containing the one-time password, consisting of a number of digits (as defined
+        /// by <see cref="TokenLength"/>).
+        /// </returns>
+        /// <remarks>The HTOP algorithm is described in RFC 4226.</remarks>
+        public static string GetHotp(string key, long counter)
+        {
+            byte[] secret = Utility.Base32Decode(key);
+            return GetHotp(secret, counter);
         }
 
         /// <summary>
